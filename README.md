@@ -131,3 +131,23 @@ export TOKEN=`curl --data '{"email":"abc@xyz.com","password":"WindowsPwd"}' --he
 echo $TOKEN
 # Decrypt the token and returns its content
 curl --request GET 'http://localhost:90/contents' -H "Authorization: Bearer ${TOKEN}" | jq .
+
+
+create eks 
+eksctl create cluster --name simple-jwt-api --nodes=2 --version=1.22 --instance-types=t2.medium --region=us-east-2
+kubectl get nodes
+delete 
+eksctl delete cluster simple-jwt-api  --region=us-east-2
+
+create role code buid
+
+aws iam create-role --role-name UdacityFlaskDeployCBKubectlRole --assume-role-policy-document file://trust.json --output text --query 'Role.Arn'
+
+attach policy
+
+aws iam put-role-policy --role-name UdacityFlaskDeployCBKubectlRole --policy-name eks-describe --policy-document file://iam-role-policy.json
+Authorize the CodeBuild using EKS RBAC
+kubectl get -n kube-system configmap/aws-auth -o yaml > aws-auth-patch.yml
+
+update 
+kubectl patch configmap/aws-auth -n kube-system --patch "$(cat aws-auth-patch.yml)"
