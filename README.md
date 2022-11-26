@@ -131,11 +131,23 @@ export TOKEN=`curl --data '{"email":"abc@xyz.com","password":"WindowsPwd"}' --he
 echo $TOKEN
 # Decrypt the token and returns its content
 curl --request GET 'http://localhost:90/contents' -H "Authorization: Bearer ${TOKEN}" | jq .
+aws configure 
+aws configure set aws_session_token FwoGZXIvYXdzEAgaDD7ed4IYO87AYUY6gCLVAR/j98/cTWqCpp/WbCSxgmgsTK75PUktlulqwIdp3pzjvyqqiWgaLSqhBAiwncyafxaYOjqFGTrfOQNy5ch+HvqSUanPDpNAAHtMF3Q7dxnmYeLJ0ZEyJj41LWyPdHzJrh4UcRu7KxvngxEjRhR5Avpv0cq3zAZtJjFzRf91V7jLpvtuzPlId/OsHm5zyWs6QKveqkgFPJnh52Td2Cf+ef24rnZizkmSDSiBD1FRkE4relO1Cyyah1q1kUhZTwm4P7bxf5VFeRDc+V/3JCcvVNuXuDV6nSik4YacBjItZDVtzT7DN1LdfqJmq2bBVQ+wbEKNRePyHt6I1S8l8EdHdmzwRAk1beXvi09/
+setx AWS_ACCESS_KEY_ID ASIA3D3P4FEUNHLHKFWB
+setx AWS_SECRET_ACCESS_KEY 20m7pXl4rZOeY5650T0Bz3t0bffbvlUAvQ1UseLT
+setx AWS_DEFAULT_REGION us-east-1
+setx AWS_DEFAULT_PROFILE default
 
-
+aws iam list-users
 create eks 
-eksctl create cluster --name simple-jwt-api --nodes=2 --version=1.22 --instance-types=t2.medium --region=us-east-2
+eksctl create cluster --name simple-jwt-api --nodes=2 --instance-types=t2.medium --region=us-east-1
 kubectl get nodes
+
+aws eks update-kubeconfig --name example
+aws eks update-kubeconfig --region rus-east-2 --name simple-jwt-api
+eksctl get cluster --name=simple-jwt-api 
+
+eksctl utils describe-stacks --region=us-east-2 --cluster=simple-jwt-api
 delete 
 eksctl delete cluster simple-jwt-api  --region=us-east-2
 
@@ -151,3 +163,9 @@ kubectl get -n kube-system configmap/aws-auth -o yaml > aws-auth-patch.yml
 
 update 
 kubectl patch configmap/aws-auth -n kube-system --patch "$(cat aws-auth-patch.yml)"
+
+aws ssm put-parameter --name JWT_SECRET --overwrite --value "myjwtsecret" --type SecureString
+# Verify
+aws ssm get-parameter --name JWT_SECRET
+
+aws ssm delete-parameter --name JWT_SECRET
