@@ -94,7 +94,7 @@ pip3 install -r requirements.txt
  export LOG_LEVEL=DEBUG
 ```
 
-export TOKEN=`curl --data '{"email":"abc@xyz.com","password":"mypwd"}' --header "Content-Type: application/json" -X POST localhost:8080/auth  | jq -r '.token'`
+export TOKEN=`curl --data '{"email":"abc@xyz.com","password":"mypwd"}' --header "Content-Type: application/json" -X POST localhost:90/auth  | jq -r '.token'`
 
 
 
@@ -156,8 +156,12 @@ create role code buid
 aws iam create-role --role-name UdacityFlaskDeployCBKubectlRole --assume-role-policy-document file://trust.json --output text --query 'Role.Arn'
 
 attach policy
+export TOKEN=`curl -d '{"email":"demo@gmail","password":"demo"}' -H "Content-Type: application/json" -X POST a12ffeba9782d434d8b7959b30155a46-546448178.us-east-1.elb.amazonaws.com/auth  | jq -r '.token'`
+curl --request GET 'a12ffeba9782d434d8b7959b30155a46-546448178.us-east-1.elb.amazonaws.com/contents' -H "Authorization: Bearer ${TOKEN}" | jq 
+
 
 aws iam put-role-policy --role-name UdacityFlaskDeployCBKubectlRole --policy-name eks-describe --policy-document file://iam-role-policy.json
+
 Authorize the CodeBuild using EKS RBAC
 kubectl get -n kube-system configmap/aws-auth -o yaml > aws-auth-patch.yml
 
